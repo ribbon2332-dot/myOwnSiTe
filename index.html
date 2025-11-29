@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Елена Николаевна | Репетитор по английскому</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Georgia', 'Times New Roman', 'Times', 'serif'],
+                        display: ['Georgia', 'Times New Roman', 'Times', 'serif'],
+                    },
+                    colors: {
+                        neonPink: '#FF10F0',
+                        neonBlue: '#00F0FF',
+                        neonPurple: '#BC13FE',
+                        neonGreen: '#CCFF00',
+                        darkBg: '#0F172A',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #0F172A; color: #F8FAFC; font-family: 'Georgia', serif; }
+        .gradient-text {
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        /* English Letters Pattern */
+        .english-pattern {
+            background-color: #0F172A;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cstyle%3Etext%7Bfont-family:'Georgia',serif;font-weight:900;fill:%23334155;fill-opacity:0.15;%7D%3C/style%3E%3Ctext x='10' y='30' font-size='20'%3EA%3C/text%3E%3Ctext x='40' y='70' font-size='24'%3EB%3C/text%3E%3Ctext x='70' y='40' font-size='18'%3EC%3C/text%3E%3Ctext x='10' y='80' font-size='22'%3ED%3C/text%3E%3Ctext x='60' y='20' font-size='16'%3EE%3C/text%3E%3Ctext x='80' y='80' font-size='20'%3EF%3C/text%3E%3C/svg%3E");
+            background-attachment: fixed;
+        }
+        /* Animation Keyframes */
+        @keyframes scan {
+            0% { top: 0%; opacity: 0; }
+            10% { opacity: 0.5; }
+            90% { opacity: 0.5; }
+            100% { top: 100%; opacity: 0; }
+        }
+        @keyframes loading {
+            0% { transform: scaleX(0); }
+            100% { transform: scaleX(1); }
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #0F172A; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0"
+  }
+}
+</script>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // --- ICONS (SVG Components replacing Lucide import) ---
+        const Icon = ({ children, className, ...props }) => (
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>{children}</svg>
+        );
+        const MenuIcon = (p) => <Icon {...p}><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></Icon>;
+        const XIcon = (p) => <Icon {...p}><path d="M18 6 6 18"/><path d="m6 6 18 18"/></Icon>;
+        const Sparkles = (p) => <Icon {...p}><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M9 3v4"/><path d="M3 5h4"/><path d="M3 9h4"/></Icon>;
+        const Tag = (p) => <Icon {...p}><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l5 5a2 2 0 0 0 2.828 0l7.172-7.172a2 2 0 0 0 0-2.828l-5-5Z"/><path d="M7 7h.01"/></Icon>;
+        const BookOpen = (p) => <Icon {...p}><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></Icon>;
+        const User = (p) => <Icon {...p}><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></Icon>;
+        const Award = (p) => <Icon {...p}><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></Icon>;
+        const Clock = (p) => <Icon {...p}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></Icon>;
+        const CheckCircle = (p) => <Icon {...p}><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></Icon>;
+        const Baby = (p) => <Icon {...p}><path d="M9 12h.01"/><path d="M15 12h.01"/><path d="M10 16c.5.3 1.2.5 2 .5s1.5-.2 2-.5"/><path d="M19 6.3a9 9 0 0 1 1.8 3.9 2 2 0 0 1 0 3.8 9 9 0 0 1-1.8 3.9"/><path d="M5 6.3a9 9 0 0 0-1.8 3.9 2 2 0 0 0 0 3.8 9 9 0 0 0 1.8 3.9"/><path d="M12 3a5 5 0 0 0-5 5v8a5 5 0 0 0 5 5 5 5 0 0 0 5-5V8a5 5 0 0 0-5-5z"/></Icon>;
+        const GraduationCap = (p) => <Icon {...p}><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></Icon>;
+        const Briefcase = (p) => <Icon {...p}><rect width="20" height="14" x="2" y="7" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></Icon>;
+        const Globe = (p) => <Icon {...p}><circle cx="12" cy="12" r="10"/><line x1="2" x2="22" y1="12" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></Icon>;
+        const Home = (p) => <Icon {...p}><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></Icon>;
+        const CreditCard = (p) => <Icon {...p}><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></Icon>;
+        const Quote = (p) => <Icon {...p}><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/></Icon>;
+        const Star = (p) => <Icon {...p}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></Icon>;
+        const Phone = (p) => <Icon {...p}><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></Icon>;
+        const Mail = (p) => <Icon {...p}><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></Icon>;
+        const Send = (p) => <Icon {...p}><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></Icon>;
+        const Ticket = (p) => <Icon {...p}><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></Icon>;
+        const Crosshair = (p) => <Icon {...p}><circle cx="12" cy="12" r="10"/><line x1="22" x2="18" y1="12" y2="12"/><line x1="6" x2="2" y1="12" y2="12"/><line x1="12" x2="12" y1="6" y2="2"/><line x1="12" x2="12" y1="22" y2="18"/></Icon>;
+
+
+        // --- COMPONENTS ---
+
+        // Button Component
+        const Button = ({ children, variant = 'primary', fullWidth = false, onClick, className = '' }) => {
+            const baseStyle = "font-display font-bold py-4 px-8 rounded-full transition-all duration-300 transform hover:scale-105 shadow-[0_0_15px_rgba(0,0,0,0.3)] active:scale-95";
+            const variants = {
+                primary: "bg-gradient-to-r from-neonPink to-purple-600 text-white hover:shadow-[0_0_20px_rgba(255,16,240,0.6)]",
+                secondary: "bg-transparent border-2 border-neonBlue text-neonBlue hover:bg-neonBlue hover:text-black hover:shadow-[0_0_20px_rgba(0,240,255,0.6)]"
+            };
+            return (
+                <button 
+                    onClick={onClick}
+                    className={`${baseStyle} ${variants[variant]} ${fullWidth ? 'w-full' : ''} ${className}`}
+                >
+                    {children}
+                </button>
+            );
+        };
+
+        // BonusWidget Component
+        const BonusWidget = ({ isOpen, setIsOpen, onWin }) => {
+            const [gameState, setGameState] = useState('initial'); // 'initial' | 'map' | 'digging' | 'won'
+            const [finalReward, setFinalReward] = useState(null);
+            const [isVisible, setIsVisible] = useState(false);
+            const [targetPos, setTargetPos] = useState({ top: '50%', left: '50%' });
+
+            useEffect(() => {
+                const timer = setTimeout(() => setIsVisible(true), 2000);
+                return () => clearTimeout(timer);
+            }, []);
+
+            const rewards = [
+                { icon: "🏷️", title: "СКИДКА 10%", text: "Скидка 10% на первый месяц" },
+                { icon: "🎁", title: "ПОДАРОК", text: "Бесплатный пробный урок" },
+                { icon: "📜", title: "PDF ГАЙД", text: "Бесплатный PDF с полезными фразовыми глаголами" },
+                { icon: "⏱️", title: "БОНУС", text: "Дополнительные 15 минут на первый урок" },
+                { icon: "🤝", title: "КОНСУЛЬТАЦИЯ", text: "Бесплатная консультация по плану обучения" },
+                { icon: "💎", title: "СКИДКА 20%", text: "Скидка 20% при покупке пакета из 5 уроков" }
+            ];
+
+            const startHunt = () => {
+                const randomTop = Math.floor(Math.random() * 70) + 15;
+                const randomLeft = Math.floor(Math.random() * 70) + 15;
+                setTargetPos({ top: `${randomTop}%`, left: `${randomLeft}%` });
+                setGameState('map');
+            };
+
+            const handleDig = () => {
+                setGameState('digging');
+                setTimeout(() => {
+                    const winningIndex = Math.floor(Math.random() * rewards.length);
+                    const reward = rewards[winningIndex];
+                    setFinalReward(reward);
+                    setGameState('won');
+                    onWin(`${reward.icon} ${reward.text}`);
+                }, 1500);
+            };
+
+            const handleClaim = () => {
+                setIsOpen(false);
+                const contactSection = document.getElementById('contact');
+                contactSection?.scrollIntoView({ behavior: 'smooth' });
+            };
+
+            if (!isVisible) return null;
+
+            return (
+                <React.Fragment>
+                    {!isOpen && gameState !== 'won' && (
+                        <button 
+                            onClick={() => setIsOpen(true)}
+                            className="fixed bottom-6 right-6 md:bottom-10 md:right-10 z-40 bg-slate-900 border-2 border-neonPink p-4 rounded-full shadow-[0_0_20px_rgba(255,16,240,0.4)] animate-bounce hover:scale-110 transition-transform group"
+                        >
+                            <div className="absolute -top-2 -right-2 bg-neonGreen text-black text-xs font-bold px-2 py-1 rounded-full animate-pulse">
+                                BONUS
+                            </div>
+                            <Sparkles className="w-8 h-8 text-neonPink group-hover:text-white transition-colors" />
+                        </button>
+                    )}
+
+                    {isOpen && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-in fade-in duration-300">
+                            <div className="relative w-full max-w-lg bg-slate-900 border border-neonPink/50 rounded-3xl p-1 shadow-[0_0_50px_rgba(255,16,240,0.2)] overflow-hidden">
+                                
+                                <div className="bg-slate-900/95 p-6 md:p-8 rounded-[1.4rem] relative h-full min-h-[500px] flex flex-col items-center text-center">
+                                    
+                                    <button 
+                                        onClick={() => setIsOpen(false)} 
+                                        className="absolute top-4 right-4 text-gray-500 hover:text-white transition-colors z-20"
+                                    >
+                                        <XIcon className="w-6 h-6" />
+                                    </button>
+
+                                    {gameState === 'initial' && (
+                                        <div className="flex flex-col items-center justify-center h-full my-auto space-y-8">
+                                            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-neonPink to-purple-600 flex items-center justify-center border-4 border-slate-800 shadow-[0_0_30px_rgba(255,16,240,0.5)] animate-pulse">
+                                                <span className="text-5xl">🎁</span>
+                                            </div>
+                                            
+                                            <div>
+                                                <h3 className="text-3xl font-display font-black text-white mb-3 uppercase tracking-tight">
+                                                    Найди свой <span className="gradient-text bg-gradient-to-r from-neonPink to-neonBlue">Бонус</span>
+                                                </h3>
+                                                <p className="text-gray-300 max-w-xs mx-auto text-lg leading-relaxed">
+                                                    На карте города спрятан <span className="text-neonGreen font-bold">один приз</span> для нового ученика.
+                                                </p>
+                                            </div>
+
+                                            <Button onClick={startHunt} className="group w-full max-w-xs !py-3 !text-lg">
+                                                <span className="flex items-center justify-center gap-2 group-hover:scale-105 transition-transform">
+                                                    ИСКАТЬ НА КАРТЕ
+                                                </span>
+                                            </Button>
+                                        </div>
+                                    )}
+
+                                    {gameState === 'map' && (
+                                        <div className="w-full h-full flex flex-col">
+                                            <div className="flex items-center justify-between mb-4 px-2">
+                                                <h3 className="text-xl font-display font-bold text-white">
+                                                    ПОИСК...
+                                                </h3>
+                                                <div className="flex gap-1">
+                                                    <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
+                                                    <div className="text-xs text-neonGreen font-mono">LIVE</div>
+                                                </div>
+                                            </div>
+                                            
+                                            <div className="relative w-full aspect-square bg-slate-950 rounded-xl border border-slate-700 overflow-hidden group cursor-crosshair shadow-inner ring-1 ring-white/10">
+                                                <div className="absolute inset-0 opacity-30" 
+                                                     style={{
+                                                         backgroundImage: 'radial-gradient(#4b5563 1px, transparent 1px)', 
+                                                         backgroundSize: '20px 20px'
+                                                     }}>
+                                                </div>
+                                                
+                                                <div className="absolute top-1/4 left-1/4 w-16 h-16 border border-white/10 rounded-full opacity-50"></div>
+                                                <div className="absolute bottom-1/3 right-1/4 w-24 h-24 border border-white/10 rounded opacity-50 rotate-12"></div>
+                                                
+                                                <div className="absolute inset-0 bg-gradient-to-t from-neonPink/20 to-transparent w-full h-[20%] top-0 animate-[scan_3s_ease-in-out_infinite] opacity-40 border-b border-neonPink/50"></div>
+
+                                                <button 
+                                                    onClick={handleDig}
+                                                    style={{ top: targetPos.top, left: targetPos.left }}
+                                                    className="absolute -translate-x-1/2 -translate-y-1/2 group-hover:scale-110 transition-transform duration-300 focus:outline-none z-10"
+                                                >
+                                                    <div className="relative">
+                                                        <div className="absolute inset-0 bg-neonGreen/30 blur-xl rounded-full animate-pulse"></div>
+                                                        <Crosshair className="w-16 h-16 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.8)] animate-[spin_12s_linear_infinite]" />
+                                                        <div className="absolute inset-0 flex items-center justify-center">
+                                                            <span className="text-2xl animate-bounce">❓</span>
+                                                        </div>
+                                                    </div>
+                                                </button>
+
+                                                <div className="absolute bottom-3 left-4 text-[10px] text-gray-500 font-mono bg-black/50 px-2 py-1 rounded">
+                                                    LAT: 51.5074 N <br/> LNG: 0.1278 W
+                                                </div>
+                                            </div>
+                                            
+                                            <p className="mt-6 text-sm text-gray-400">
+                                                Нажми на метку, чтобы забрать приз!
+                                            </p>
+                                        </div>
+                                    )}
+
+                                    {gameState === 'digging' && (
+                                        <div className="flex flex-col items-center justify-center h-full space-y-6">
+                                            <div className="text-6xl animate-bounce">
+                                                🎰
+                                            </div>
+                                            <div>
+                                                <h3 className="text-2xl font-bold text-white mb-2">ПРОВЕРЯЕМ УДАЧУ...</h3>
+                                                <div className="w-48 h-2 bg-slate-800 rounded-full overflow-hidden">
+                                                    <div className="h-full bg-gradient-to-r from-neonPink to-purple-500 animate-[loading_1.5s_ease-in-out_infinite] w-full origin-left"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {gameState === 'won' && finalReward && (
+                                        <div className="flex flex-col items-center justify-center h-full animate-in zoom-in duration-500">
+                                            <div className="relative mb-8 group">
+                                                <div className="absolute inset-0 bg-white/20 blur-3xl rounded-full animate-pulse"></div>
+                                                <div className="text-9xl relative z-10 transform group-hover:scale-110 transition-transform duration-300 drop-shadow-[0_0_30px_rgba(255,255,255,0.4)]">
+                                                    {finalReward.icon}
+                                                </div>
+                                            </div>
+
+                                            <h2 className="text-2xl font-black text-white mb-2 uppercase tracking-wider text-shadow">
+                                                {finalReward.title}
+                                            </h2>
+
+                                            <div className="bg-slate-800 border border-slate-700 p-6 rounded-2xl mb-8 w-full shadow-inner">
+                                                <p className="text-xl md:text-2xl font-display font-bold text-neonGreen leading-tight">
+                                                    {finalReward.text}
+                                                </p>
+                                            </div>
+
+                                            <Button onClick={handleClaim} fullWidth variant="primary">
+                                                ЗАБРАТЬ ВЫИГРЫШ
+                                            </Button>
+                                            
+                                            <p className="mt-4 text-xs text-gray-500">
+                                                Бонус будет указан в вашей заявке.
+                                            </p>
+                                        </div>
+                                    )}
+
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </React.Fragment>
+            );
+        };
+
+        // Navbar Component
+        const Navbar = ({ onOpenBonus }) => {
+            const [isOpen, setIsOpen] = useState(false);
+
+            const scrollTo = (id) => {
+                setIsOpen(false);
+                const element = document.getElementById(id);
+                if (element) {
+                    const offset = 80;
+                    const elementPosition = element.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - offset;
+                
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: "smooth"
+                    });
+                }
+            };
+
+            return (
+                <nav className="fixed top-0 left-0 w-full z-50 bg-darkBg/95 backdrop-blur-md py-3 shadow-lg border-b border-white/5 transition-all duration-300">
+                    <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
+                        <div className="font-display font-bold text-xl md:text-2xl text-white cursor-pointer hover:opacity-80 transition-opacity tracking-tight" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
+                            Helen<span className="text-neonBlue">.English</span>
+                        </div>
+                        
+                        {/* Desktop Menu */}
+                        <div className="hidden md:flex gap-3 items-center text-sm font-bold text-gray-300">
+                            <button 
+                                onClick={() => scrollTo('about')} 
+                                className="px-4 py-2 rounded-full border border-white/40 text-white hover:border-neonBlue hover:text-neonBlue hover:bg-white/5 transition-all duration-300 uppercase tracking-wider flex items-center gap-2 text-xs font-bold"
+                            >
+                                <User className="w-3 h-3" /> Обо мне
+                            </button>
+
+                            <button 
+                                onClick={() => scrollTo('services')} 
+                                className="px-4 py-2 rounded-full border border-white/40 text-white hover:border-neonPurple hover:text-neonPurple hover:bg-white/5 transition-all duration-300 uppercase tracking-wider flex items-center gap-2 text-xs font-bold"
+                            >
+                                <BookOpen className="w-3 h-3" /> Программы
+                            </button>
+                            
+                            <button 
+                                onClick={onOpenBonus} 
+                                className="px-4 py-2 rounded-full border border-neonPink text-neonPink hover:bg-neonPink hover:text-white transition-all duration-300 uppercase tracking-wider flex items-center gap-2 text-xs font-bold shadow-[0_0_10px_rgba(255,16,240,0.2)] hover:shadow-[0_0_20px_rgba(255,16,240,0.5)] transform hover:scale-105"
+                            >
+                                <Sparkles className="w-4 h-4" /> Бонус
+                            </button>
+                            
+                            <button 
+                                onClick={() => scrollTo('prices')} 
+                                className="px-4 py-2 rounded-full border border-neonBlue text-neonBlue hover:bg-neonBlue hover:text-black transition-all duration-300 uppercase tracking-wider flex items-center gap-2 text-xs font-bold"
+                            >
+                                <Tag className="w-4 h-4" /> Цены
+                            </button>
+                            
+                            <Button variant="secondary" onClick={() => scrollTo('contact')} className="!py-2 !px-6 !text-xs !border-white/40 !text-white hover:!border-neonBlue hover:!text-black ml-2">
+                                Записаться
+                            </Button>
+                        </div>
+
+                        {/* Mobile Menu Button */}
+                        <button className="md:hidden text-white p-2" onClick={() => setIsOpen(!isOpen)}>
+                            {isOpen ? <XIcon className="w-8 h-8" /> : <MenuIcon className="w-8 h-8" />}
+                        </button>
+                    </div>
+
+                    {/* Mobile Menu Dropdown */}
+                    {isOpen && (
+                        <div className="md:hidden absolute top-full left-0 w-full bg-darkBg border-b border-slate-800 p-6 flex flex-col gap-4 shadow-2xl animate-in slide-in-from-top-5">
+                            <button onClick={() => scrollTo('about')} className="text-left text-lg font-bold text-gray-300 hover:text-white p-3 hover:bg-white/5 rounded-lg border border-white/10 flex items-center gap-3">
+                                <User className="w-5 h-5" /> Обо мне
+                            </button>
+                            <button onClick={() => scrollTo('services')} className="text-left text-lg font-bold text-gray-300 hover:text-white p-3 hover:bg-white/5 rounded-lg border border-white/10 flex items-center gap-3">
+                                <BookOpen className="w-5 h-5" /> Программы
+                            </button>
+                            
+                            <button 
+                                onClick={() => { setIsOpen(false); onOpenBonus(); }} 
+                                className="text-left text-lg font-bold text-neonPink hover:text-white flex items-center gap-3 p-3 hover:bg-neonPink/10 rounded-lg border border-neonPink/50"
+                            >
+                                <Sparkles className="w-5 h-5" /> Получить Бонус
+                            </button>
+                            
+                            <button onClick={() => scrollTo('prices')} className="text-left text-lg font-bold text-neonBlue hover:text-white p-3 hover:bg-neonBlue/10 rounded-lg border border-neonBlue/50 flex items-center gap-3">
+                                <Tag className="w-5 h-5" /> Цены
+                            </button>
+                            
+                            <Button fullWidth onClick={() => scrollTo('contact')}>Записаться</Button>
+                        </div>
+                    )}
+                </nav>
+            );
+        };
+
+        // Hero Component
+        const Hero = () => {
+            const TUTOR_IMAGE_URL = "./tutor.jpg";
+
+            const scrollTo = (id) => {
+                const element = document.getElementById(id);
+                if (element) {
+                    const offset = 80;
+                    const elementPosition = element.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - offset;
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: "smooth"
+                    });
+                }
+            };
+
+            return (
+                <div id="about" className="relative overflow-hidden min-h-screen flex items-center pt-24 md:pt-16">
+                    {/* Background Glow Effects */}
+                    <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-neonBlue/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+                    <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-neonPink/10 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2 pointer-events-none"></div>
+
+                    <div className="max-w-7xl mx-auto px-4 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
+                        <div className="space-y-8 text-center lg:text-left order-2 lg:order-1">
+                            <div className="inline-block bg-white/10 backdrop-blur-md rounded-full px-4 py-1 border border-white/20">
+                                <span className="text-neonGreen font-bold tracking-wide text-xs md:text-sm uppercase">Английский легко и с радостью</span>
+                            </div>
+                            
+                            <h1 className="font-display font-black text-5xl md:text-7xl leading-tight text-white tracking-tight">
+                                <span className="gradient-text bg-gradient-to-r from-neonBlue to-purple-500">ЕЛЕНА</span> <br />
+                                <span className="gradient-text bg-gradient-to-r from-neonPink to-purple-400">НИКОЛАЕВНА</span>
+                            </h1>
+
+                            <p className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-light">
+                                Кандидат филологических наук. Опытный репетитор <span className="whitespace-nowrap">с <span className="font-bold text-white">15-летним</span> стажем</span>. 
+                                Помогаю детям и взрослым заговорить на английском и сдать экзамены на 80+ баллов.
+                            </p>
+
+                            <div className="flex flex-wrap justify-center lg:justify-start gap-3 md:gap-4 text-xs md:text-sm font-bold text-gray-300 tracking-wide">
+                                <div className="flex items-center gap-2 bg-slate-800/50 px-3 py-2 rounded-lg border border-slate-700">
+                                    <Award className="text-yellow-400 w-4 h-4 md:w-5 md:h-5" />
+                                    <span>Кандидат наук</span>
+                                </div>
+                                <div className="flex items-center gap-2 bg-slate-800/50 px-3 py-2 rounded-lg border border-slate-700">
+                                    <Clock className="text-neonBlue w-4 h-4 md:w-5 md:h-5" />
+                                    <span>Стаж 15 лет</span>
+                                </div>
+                                <div className="flex items-center gap-2 bg-slate-800/50 px-3 py-2 rounded-lg border border-slate-700">
+                                    <CheckCircle className="text-neonGreen w-4 h-4 md:w-5 md:h-5" />
+                                    <span>Результат 80+</span>
+                                </div>
+                            </div>
+
+                            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4">
+                                <Button onClick={() => scrollTo('contact')}>Записаться на пробное</Button>
+                                <Button variant="secondary" onClick={() => scrollTo('services')}>
+                                    Узнать подробнее
+                                </Button>
+                            </div>
+                        </div>
+
+                        <div className="relative mx-auto lg:ml-auto w-full max-w-md lg:max-w-lg group order-1 lg:order-2">
+                            <div className="absolute inset-0 bg-gradient-to-tr from-neonBlue to-neonPink rounded-[2rem] rotate-6 group-hover:rotate-3 transition-transform duration-500 blur opacity-70"></div>
+                            <div className="relative bg-slate-800 rounded-[2rem] overflow-hidden border-2 border-slate-700 shadow-2xl">
+                                <img 
+                                src={TUTOR_IMAGE_URL}
+                                alt="Елена Николаевна"
+                                onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"; // Fallback image
+                                }}
+                                className="w-full h-auto object-cover object-center transition-all duration-700 min-h-[400px]"
+                                />
+                                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-slate-900 via-slate-900/80 to-transparent p-8">
+                                <p className="text-white font-display font-bold text-lg">Ваш наставник</p>
+                                <p className="text-neonBlue">В мире английского языка</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        // Services Component
+        const Services = () => {
+             const services = [
+                {
+                  title: "Для детей",
+                  description: "Увлекательные занятия в игровой форме. Песни, мультфильмы, творческие задания. Прививаем любовь к языку с первых слов без скучной зубрежки.",
+                  icon: <Baby className="w-8 h-8 text-neonGreen" />,
+                  colorClass: "shadow-[0_0_20px_rgba(204,255,0,0.3)] border border-neonGreen/30 text-neonGreen"
+                },
+                {
+                  title: "Школьникам",
+                  description: "Помощь с домашними заданиями, устранение пробелов, подготовка к ВПР, ОГЭ и ЕГЭ. Учимся говорить и понимать грамматику. Результат виден уже через месяц.",
+                  icon: <GraduationCap className="w-8 h-8 text-neonBlue" />,
+                  colorClass: "shadow-[0_0_20px_rgba(0,240,255,0.3)] border border-neonBlue/30 text-neonBlue"
+                },
+                {
+                  title: "Взрослым",
+                  description: "Английский для работы, путешествий и жизни. Преодоление языкового барьера. Индивидуальная программа под ваши цели и график.",
+                  icon: <Briefcase className="w-8 h-8 text-neonPurple" />,
+                  colorClass: "shadow-[0_0_20px_rgba(188,19,254,0.3)] border border-neonPurple/30 text-neonPurple"
+                }
+              ];
+
+            return (
+                <section id="services" className="py-16 md:py-24 px-4 md:px-8 max-w-7xl mx-auto bg-slate-900/80 backdrop-blur-md rounded-3xl my-8 border border-white/5 shadow-2xl">
+                     <div className="text-center mb-16">
+                        <h2 className="font-display font-black text-3xl md:text-5xl mb-6 text-white">
+                          <span className="gradient-text bg-gradient-to-r from-neonGreen to-emerald-400">КОМУ</span> Я ПОМОГАЮ
+                        </h2>
+                        <p className="text-gray-400 max-w-2xl mx-auto text-lg">
+                          Индивидуальный подход к каждому ученику, независимо от возраста и уровня подготовки.
+                        </p>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
+                        {services.map((s, i) => (
+                            <div key={i} className={`bg-slate-800/50 backdrop-blur-sm border border-slate-700 p-8 rounded-2xl hover:bg-slate-800 transition-all duration-300 group hover:-translate-y-2 h-full flex flex-col`}>
+                              <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-6 bg-slate-900 group-hover:scale-110 transition-transform duration-300 ${s.colorClass}`}>
+                                {s.icon}
+                              </div>
+                              <h3 className="text-2xl font-display font-bold text-white mb-4 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-gray-300 transition-colors">
+                                {s.title}
+                              </h3>
+                              <p className="text-gray-400 leading-relaxed flex-grow">
+                                {s.description}
+                              </p>
+                            </div>
+                        ))}
+                      </div>
+
+                      <div id="prices" className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-3xl p-8 md:p-12 border border-slate-700 shadow-2xl relative overflow-hidden">
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-neonPink/10 rounded-full blur-[80px]"></div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 relative z-10">
+                          <div>
+                            <h3 className="font-display font-bold text-3xl text-white mb-8">
+                              Формат и <span className="text-neonPink">Стоимость</span>
+                            </h3>
+                            
+                            <div className="space-y-6">
+                              <div className="flex items-start gap-4">
+                                <div className="p-3 rounded-lg bg-slate-700 text-neonBlue shrink-0">
+                                  <Globe className="w-6 h-6" />
+                                </div>
+                                <div>
+                                  <h4 className="text-white font-bold text-lg">Онлайн занятия</h4>
+                                  <p className="text-gray-400">Zoom, Skype, Google Meet. Удобно, из любой точки мира. Интерактивная доска.</p>
+                                </div>
+                              </div>
+
+                              <div className="flex items-start gap-4">
+                                <div className="p-3 rounded-lg bg-slate-700 text-neonPurple shrink-0">
+                                  <Home className="w-6 h-6" />
+                                </div>
+                                <div>
+                                  <h4 className="text-white font-bold text-lg">Офлайн встречи</h4>
+                                  <p className="text-gray-400">Личные встречи в уютном кабинете (по договоренности).</p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex flex-col justify-center items-center bg-slate-800/50 rounded-2xl p-8 border border-white/5">
+                            <div className="mb-4 p-4 bg-neonPink/20 rounded-full text-neonPink">
+                              <CreditCard className="w-10 h-10" />
+                            </div>
+                            <p className="text-gray-400 mb-2 font-medium uppercase tracking-wider">Стоимость занятия</p>
+                            <div className="text-5xl font-black text-white mb-2 font-display flex items-baseline gap-2">
+                              <span className="text-2xl text-gray-400 font-normal">от</span> 1500 <span className="text-2xl text-gray-400 font-normal">₽</span>
+                            </div>
+                            <p className="text-center text-sm text-gray-500 mb-6">за 60 минут индивидуального урока</p>
+                            <div className="w-full h-1 bg-gradient-to-r from-transparent via-gray-700 to-transparent"></div>
+                          </div>
+                        </div>
+                      </div>
+                </section>
+            );
+        };
+
+        // Reviews Component
+        const Reviews = () => {
+             const reviews = [
+                {
+                  name: "Мария С.",
+                  role: "Ученица 11 класса",
+                  text: "Благодаря Helen я сдала ЕГЭ на 92 балла! Грамматика, которая казалась темным лесом, стала понятной и логичной. Уроки проходили очень интересно.",
+                  rating: 5,
+                  color: "border-neonPurple/50 hover:shadow-[0_0_20px_rgba(188,19,254,0.3)]"
+                },
+                {
+                  name: "Дмитрий В.",
+                  role: "IT-специалист",
+                  text: "Нужен был английский для общения с заказчиками. За полгода подняли уровень с Pre-Intermediate до уверенного разговорного. Теперь коллы проходят без стресса!",
+                  rating: 5,
+                  color: "border-neonBlue/50 hover:shadow-[0_0_20px_rgba(0,240,255,0.3)]"
+                },
+                {
+                  name: "Анна Петровна",
+                  role: "Мама ученика 4 класса",
+                  text: "Сын ненавидел английский в школе, получал двойки. Елена Николаевна нашла к нему подход через игры. Теперь это его любимый предмет, а в дневнике только 4 и 5!",
+                  rating: 5,
+                  color: "border-neonGreen/50 hover:shadow-[0_0_20px_rgba(204,255,0,0.3)]"
+                }
+              ];
+
+            return (
+                <section id="reviews" className="py-16 md:py-24 px-4 md:px-8 max-w-7xl mx-auto relative">
+                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-96 h-96 bg-neonPurple/10 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
+              
+                      <div className="text-center mb-16">
+                        <h2 className="font-display font-black text-3xl md:text-5xl mb-6 text-white">
+                          <span className="gradient-text bg-gradient-to-r from-neonPink to-purple-500">ОТЗЫВЫ</span> УЧЕНИКОВ
+                        </h2>
+                        <p className="text-gray-400 max-w-2xl mx-auto text-lg">
+                          Реальные истории успеха моих студентов. Горжусь каждым результатом!
+                        </p>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {reviews.map((r, i) => (
+                            <div key={i} className={`relative p-8 rounded-2xl bg-slate-800 border-2 ${r.color} transition-transform duration-300 hover:-translate-y-2 hover:shadow-[0_0_20px_rgba(0,0,0,0.5)]`}>
+                              <Quote className="absolute top-6 right-6 w-10 h-10 text-slate-700 opacity-50" />
+                              <div className="flex gap-1 mb-6">
+                                {[...Array(5)].map((_, j) => (
+                                  <Star key={j} className={`w-5 h-5 ${j < r.rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-600'}`} />
+                                ))}
+                              </div>
+                              <p className="text-gray-300 mb-8 text-lg italic leading-relaxed relative z-10">"{r.text}"</p>
+                              <div className="flex items-center gap-4">
+                                <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-white text-xl bg-slate-700`}>
+                                    {r.name[0]}
+                                </div>
+                                <div>
+                                  <h4 className="font-bold text-white text-lg">{r.name}</h4>
+                                  <p className="text-sm text-gray-400 uppercase tracking-wide">{r.role}</p>
+                                </div>
+                              </div>
+                            </div>
+                        ))}
+                      </div>
+                </section>
+            );
+        };
+
+        // Contact Component
+        const Contact = ({ activeBonus }) => {
+             const handleSubmit = (e) => {
+                e.preventDefault();
+                const bonusText = activeBonus ? `(С бонусом: ${activeBonus})` : '';
+                alert(`Заявка отправлена! ${bonusText} (Это демо-версия сайта)`);
+             };
+
+             return (
+                <section id="contact" className="py-16 md:py-24 px-4 md:px-8 max-w-7xl mx-auto pb-24">
+                  <div className="bg-slate-800 rounded-3xl overflow-hidden shadow-2xl border border-slate-700">
+                    <div className="grid grid-cols-1 lg:grid-cols-2">
+                      <div className="p-8 md:p-12 space-y-8 bg-gradient-to-br from-slate-800 to-slate-900">
+                        <h2 className="font-display font-black text-3xl md:text-4xl text-white">
+                          ЗАПИШИТЕСЬ НА <br/>
+                          <span className="text-neonBlue">ПРОБНОЕ ЗАНЯТИЕ</span>
+                        </h2>
+                        <p className="text-gray-400 text-lg">
+                          Оставьте заявку, и я свяжусь с вами в ближайшее время, чтобы обсудить цели и подобрать удобное время.
+                        </p>
+                        <div className="space-y-6 mt-8">
+                          <div className="flex items-center gap-4 text-white group">
+                            <div className="w-12 h-12 rounded-full bg-slate-700 flex items-center justify-center group-hover:bg-neonBlue group-hover:text-black transition-colors">
+                              <Phone className="w-5 h-5" />
+                            </div>
+                            <span className="text-xl font-bold">+7 (999) 000-00-00</span>
+                          </div>
+                          <div className="flex items-center gap-4 text-white group">
+                            <div className="w-12 h-12 rounded-full bg-slate-700 flex items-center justify-center group-hover:bg-neonPink transition-colors">
+                              <Mail className="w-5 h-5" />
+                            </div>
+                            <span className="text-xl">hello@english-tutor.ru</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="p-8 md:p-12 bg-white/5 backdrop-blur-sm">
+                        
+                        {/* Active Bonus Banner */}
+                        {activeBonus && (
+                            <div className="mb-6 p-4 rounded-xl bg-neonGreen/10 border border-neonGreen/50 flex items-center gap-4 animate-in slide-in-from-top-4">
+                                <div className="p-2 bg-neonGreen/20 rounded-full text-neonGreen">
+                                    <Ticket className="w-6 h-6" />
+                                </div>
+                                <div>
+                                    <p className="text-xs text-neonGreen font-bold uppercase tracking-wider">Бонус активирован</p>
+                                    <p className="text-white font-bold text-sm md:text-base">{activeBonus}</p>
+                                </div>
+                            </div>
+                        )}
+
+                        <form className="space-y-6" onSubmit={handleSubmit}>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-400 mb-2">Ваше имя</label>
+                            <input required type="text" className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neonBlue transition-colors" placeholder="Иван Иванов"/>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-400 mb-2">Телефон</label>
+                            <input required type="tel" className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neonBlue transition-colors" placeholder="+7 (___) ___-__-__"/>
+                          </div>
+                          <div>
+                            <label className="block text-sm font-medium text-gray-400 mb-2">Цель занятий</label>
+                            <select className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neonBlue transition-colors">
+                              <option>Для ребенка</option>
+                              <option>Подготовка к экзаменам</option>
+                              <option>Для себя / Путешествий</option>
+                              <option>Для работы</option>
+                            </select>
+                          </div>
+                          
+                          {/* Hidden input to submit bonus data */}
+                          <input type="hidden" name="bonus" value={activeBonus || ''} />
+
+                          <Button fullWidth className="mt-4 group">
+                            <span className="flex items-center justify-center gap-2">
+                              Отправить заявку
+                              <Send className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                            </span>
+                          </Button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+             );
+        };
+
+        // App Component
+        const App = () => {
+            const [activeBonus, setActiveBonus] = useState(null);
+            const [isBonusOpen, setIsBonusOpen] = useState(false);
+
+            return (
+                <div className="min-h-screen bg-darkBg text-white selection:bg-neonBlue selection:text-black font-sans relative english-pattern">
+                  <Navbar onOpenBonus={() => setIsBonusOpen(true)} />
+                  <main>
+                    <Hero />
+                    <Services />
+                    <Reviews />
+                    <Contact activeBonus={activeBonus} />
+                  </main>
+                  
+                  <BonusWidget 
+                      isOpen={isBonusOpen} 
+                      setIsOpen={setIsBonusOpen} 
+                      onWin={(bonus) => setActiveBonus(bonus)} 
+                  />
+                  
+                  <footer className="bg-slate-900 py-8 border-t border-slate-800 mt-auto relative z-10">
+                    <div className="max-w-7xl mx-auto px-4 text-center text-gray-500 text-sm">
+                      <p>&copy; {new Date().getFullYear()} Елена Николаевна. Репетитор по английскому языку.</p>
+                    </div>
+                  </footer>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
